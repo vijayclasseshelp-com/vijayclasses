@@ -1,16 +1,46 @@
-// Vijay Classes Website JavaScript - Fixed Version
+// Fixed Vijay Classes Website JavaScript - Resolved Form Input Issues
+// Fully functional contact form with FormSubmit integration
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all functionality when DOM is loaded
+    console.log('🚀 Vijay Classes Website Loaded Successfully!');
+    console.log('📧 Form configured to send to: vijayclasseshelp@gmail.com');
+    
+    // Initialize all functionality in correct order
+    initializeBasicFunctionality();
     initializeNavigation();
-    initializeForm();
+    initializeFormFunctionality();
+    initializeAnimations();
     initializeScrollEffects();
-    initializeHeroButtons();
+    initializeCounterAnimations();
+    initializeMobileMenu();
+    initializeFloatingButtons();
+    
+    // Start performance monitoring
+    monitorPerformance();
 });
 
-// Navigation functionality - Fixed
+// Initialize basic functionality first
+function initializeBasicFunctionality() {
+    // Ensure all form elements are properly initialized
+    const formElements = document.querySelectorAll('input, select, textarea');
+    formElements.forEach(element => {
+        // Remove any interfering styles or attributes
+        element.style.pointerEvents = 'auto';
+        element.style.userSelect = 'text';
+        element.disabled = false;
+        element.readOnly = false;
+        
+        // Ensure proper tabindex
+        if (!element.hasAttribute('tabindex')) {
+            element.setAttribute('tabindex', '0');
+        }
+    });
+}
+
+// Enhanced Navigation with smooth scrolling and active states
 function initializeNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
+    const navigation = document.querySelector('.navigation');
     
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -20,27 +50,526 @@ function initializeNavigation() {
             const targetSection = document.querySelector(targetId);
             
             if (targetSection) {
-                // Calculate offset for fixed navigation
-                const navHeight = document.querySelector('.navigation').offsetHeight || 80;
-                const targetPosition = targetSection.offsetTop - navHeight - 20;
+                const navHeight = navigation.offsetHeight || 80;
+                const targetPosition = targetSection.offsetTop - navHeight - 10;
                 
-                // Smooth scroll to target section
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
-                });
-                
-                // Update active state immediately
+                smoothScrollTo(Math.max(0, targetPosition), 800);
                 updateActiveNavLink(targetId);
+                closeMobileMenu();
             }
         });
     });
     
-    // Highlight active navigation item based on scroll position
-    window.addEventListener('scroll', debounce(highlightActiveNavItem, 100));
+    // Highlight active navigation on scroll
+    window.addEventListener('scroll', debounce(highlightActiveNavItem, 50));
+    
+    // Add scrolled class to navigation
+    window.addEventListener('scroll', debounce(() => {
+        const scrolled = window.pageYOffset;
+        if (scrolled > 50) {
+            navigation.classList.add('scrolled');
+        } else {
+            navigation.classList.remove('scrolled');
+        }
+    }, 10));
 }
 
-// Update active navigation link
+// Fixed Form Functionality - Removed interfering code
+function initializeFormFunctionality() {
+    const form = document.getElementById('enquiryForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (!form || !submitBtn) {
+        console.error('Form elements not found');
+        return;
+    }
+    
+    console.log('✅ Form elements found and initializing...');
+    
+    // Simple, non-interfering form field handling
+    const formFields = form.querySelectorAll('input, select, textarea');
+    formFields.forEach(field => {
+        // Only add blur validation, don't interfere with input
+        field.addEventListener('blur', function() {
+            validateFieldOnBlur(this);
+        });
+        
+        // Simple phone formatting without interference
+        if (field.type === 'tel') {
+            field.addEventListener('input', function() {
+                formatPhoneNumberSimple(this);
+            });
+        }
+        
+        // Clear errors on input without blocking input
+        field.addEventListener('input', function() {
+            if (this.classList.contains('error')) {
+                clearFieldError(this);
+            }
+        });
+    });
+    
+    // Form submission handler
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('📝 Form submission initiated');
+        
+        // Validate form
+        if (!validateFormSimple(form)) {
+            showNotification('❌ Please fill all required fields correctly', 'error');
+            return;
+        }
+        
+        // Set loading state
+        setSubmitButtonLoading(true);
+        
+        try {
+            // Prepare form data
+            const formData = new FormData(form);
+            
+            // Add metadata
+            formData.append('Submitted_On', new Date().toLocaleString('en-IN', { 
+                timeZone: 'Asia/Kolkata',
+                dateStyle: 'full',
+                timeStyle: 'long'
+            }));
+            formData.append('Form_Source', 'Vijay Classes Website');
+            
+            console.log('📤 Sending form data...');
+            
+            // Submit to FormSubmit
+            const response = await fetch('https://formsubmit.co/vijayclasseshelp@gmail.com', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                console.log('✅ Form submitted successfully!');
+                handleFormSuccess();
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+        } catch (error) {
+            console.error('❌ Form submission error:', error);
+            handleFormError();
+        } finally {
+            setSubmitButtonLoading(false);
+        }
+    });
+    
+    console.log('✅ Form functionality initialized successfully');
+}
+
+// Simplified validation that doesn't interfere with input
+function validateFieldOnBlur(field) {
+    const value = field.value.trim();
+    
+    // Clear previous errors
+    clearFieldError(field);
+    
+    // Check required fields
+    if (field.hasAttribute('required') && !value) {
+        showFieldError(field, 'This field is required');
+        return false;
+    }
+    
+    // Check email format
+    if (field.type === 'email' && value && !isValidEmail(value)) {
+        showFieldError(field, 'Please enter a valid email address');
+        return false;
+    }
+    
+    // Check phone format
+    if (field.type === 'tel' && value && !isValidPhone(value)) {
+        showFieldError(field, 'Please enter a valid 10-digit phone number');
+        return false;
+    }
+    
+    return true;
+}
+
+// Simple form validation
+function validateFormSimple(form) {
+    const requiredFields = form.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        const value = field.value.trim();
+        if (!value) {
+            showFieldError(field, 'This field is required');
+            isValid = false;
+        }
+    });
+    
+    // Check email format if provided
+    const emailField = form.querySelector('input[type="email"]');
+    if (emailField && emailField.value.trim() && !isValidEmail(emailField.value.trim())) {
+        showFieldError(emailField, 'Please enter a valid email address');
+        isValid = false;
+    }
+    
+    // Check phone format
+    const phoneField = form.querySelector('input[type="tel"]');
+    if (phoneField && phoneField.value.trim() && !isValidPhone(phoneField.value.trim())) {
+        showFieldError(phoneField, 'Please enter a valid 10-digit phone number');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+// Simple phone formatting without blocking input
+function formatPhoneNumberSimple(field) {
+    setTimeout(() => {
+        let value = field.value.replace(/\D/g, '');
+        if (value.length > 10) {
+            value = value.substring(0, 10);
+        }
+        if (field.value !== value) {
+            field.value = value;
+        }
+    }, 0);
+}
+
+// Handle successful form submission
+function handleFormSuccess() {
+    document.getElementById('enquiryForm').reset();
+    showNotification('🎉 Enquiry Submitted Successfully! Dr. Vijay Jawale will contact you within 2 hours.', 'success', 8000);
+    
+    const enquirySection = document.getElementById('enquiry');
+    if (enquirySection) {
+        smoothScrollTo(enquirySection.offsetTop - 100, 600);
+    }
+    
+    console.log('🎯 Form submitted successfully');
+    
+    setTimeout(showFollowUpOptions, 3000);
+}
+
+// Handle form submission error
+function handleFormError() {
+    const formData = new FormData(document.getElementById('enquiryForm'));
+    const emailSubject = encodeURIComponent('🎓 Student Enquiry - Vijay Classes');
+    const emailBody = encodeURIComponent(createEmailBody(formData));
+    const mailtoLink = `mailto:vijayclasseshelp@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+    
+    const errorMessage = `
+        <div style="text-align: center;">
+            <h4>⚠️ Submission Error</h4>
+            <p>Please use one of these alternatives:</p>
+            <div style="margin: 15px 0;">
+                <a href="${mailtoLink}" style="display: inline-block; margin: 5px; padding: 10px 15px; background: #3b82f6; color: white; text-decoration: none; border-radius: 5px;">📧 Send Email</a>
+                <a href="tel:8275706318" style="display: inline-block; margin: 5px; padding: 10px 15px; background: #10b981; color: white; text-decoration: none; border-radius: 5px;">📞 Call Now</a>
+                <a href="https://wa.me/918275706318" style="display: inline-block; margin: 5px; padding: 10px 15px; background: #25d366; color: white; text-decoration: none; border-radius: 5px;" target="_blank">💬 WhatsApp</a>
+            </div>
+        </div>
+    `;
+    
+    showNotification(errorMessage, 'error', 12000);
+}
+
+// Create email body for fallback
+function createEmailBody(formData) {
+    return `
+🎓 NEW STUDENT ENQUIRY - VIJAY CLASSES
+
+Student Information:
+Name: ${formData.get('Student_Name') || 'Not provided'}
+Class: ${formData.get('Student_Class') || 'Not selected'}
+Board: ${formData.get('Education_Board') || 'Not selected'}
+Subjects: ${formData.get('Subjects_Required') || 'Not specified'}
+Learning Mode: ${formData.get('Learning_Mode') || 'Not selected'}
+
+Contact Information:
+Parent Name: ${formData.get('Parent_Name') || 'Not provided'}
+Phone: ${formData.get('Phone_Number') || 'Not provided'}
+Email: ${formData.get('Email_Address') || 'Not provided'}
+Address: ${formData.get('Student_Address') || 'Not provided'}
+
+Message: ${formData.get('Additional_Message') || 'No additional message'}
+
+Submitted: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+    `;
+}
+
+// Show follow-up options
+function showFollowUpOptions() {
+    const followUpHtml = `
+        <div style="text-align: center;">
+            <h4>🚀 What's Next?</h4>
+            <p>While you wait for our call:</p>
+            <div style="margin: 15px 0;">
+                <a href="tel:8275706318" style="display: inline-block; margin: 5px; padding: 10px 15px; background: #10b981; color: white; text-decoration: none; border-radius: 5px;">📞 Call Now</a>
+                <a href="https://wa.me/918275706318" style="display: inline-block; margin: 5px; padding: 10px 15px; background: #25d366; color: white; text-decoration: none; border-radius: 5px;" target="_blank">💬 WhatsApp</a>
+            </div>
+            <p style="font-size: 14px; color: #666;">⏱️ Response time: Under 2 hours</p>
+        </div>
+    `;
+    
+    showNotification(followUpHtml, 'info', 10000);
+}
+
+// Error handling functions
+function clearFieldError(field) {
+    field.classList.remove('error');
+    const errorMsg = field.parentElement.querySelector('.error-message');
+    if (errorMsg) {
+        errorMsg.remove();
+    }
+}
+
+function showFieldError(field, message) {
+    field.classList.add('error');
+    clearFieldError(field);
+    
+    const errorElement = document.createElement('div');
+    errorElement.className = 'error-message';
+    errorElement.textContent = message;
+    errorElement.style.cssText = `
+        color: var(--color-error);
+        font-size: var(--font-size-sm);
+        margin-top: var(--space-4);
+    `;
+    
+    field.parentElement.appendChild(errorElement);
+}
+
+// Utility functions
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function isValidPhone(phone) {
+    return /^[6-9]\d{9}$/.test(phone);
+}
+
+// Button state management
+function setSubmitButtonLoading(isLoading) {
+    const submitBtn = document.getElementById('submitBtn');
+    if (isLoading) {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="btn-loading">📤 Sending...</span>';
+    } else {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="btn-text">🚀 Submit Enquiry - Get Free Demo Class</span>';
+    }
+}
+
+// Counter animations
+function initializeCounterAnimations() {
+    const counters = document.querySelectorAll('.stat-number[data-count]');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    counters.forEach(counter => observer.observe(counter));
+}
+
+function animateCounter(element) {
+    const target = parseInt(element.getAttribute('data-count'));
+    const duration = 2000;
+    const start = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(target * easeOut);
+        
+        element.textContent = current + (target === 95 ? '%' : target === 15 ? '+' : target === 500 ? '+' : '');
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+// Scroll effects
+function initializeScrollEffects() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(handleScrollAnimation, observerOptions);
+    
+    const animateElements = document.querySelectorAll('.feature-card, .benefit-item, .contact-item, .coverage-card');
+    animateElements.forEach(element => {
+        observer.observe(element);
+    });
+}
+
+function handleScrollAnimation(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+        }
+    });
+}
+
+// Animations
+function initializeAnimations() {
+    // Add scroll-triggered animations CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        .feature-card, .benefit-item, .contact-item, .coverage-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .feature-card.in-view, .benefit-item.in-view, .contact-item.in-view, .coverage-card.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .error-message {
+            animation: slideInUp 0.3s ease;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Mobile menu
+function initializeMobileMenu() {
+    const toggle = document.getElementById('mobileMenuToggle');
+    const menu = document.querySelector('.nav-menu');
+    
+    if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+            menu.classList.toggle('mobile-active');
+            this.classList.toggle('active');
+        });
+    }
+}
+
+function closeMobileMenu() {
+    const menu = document.querySelector('.nav-menu');
+    const toggle = document.getElementById('mobileMenuToggle');
+    
+    if (menu && toggle) {
+        menu.classList.remove('mobile-active');
+        toggle.classList.remove('active');
+    }
+}
+
+// Floating buttons
+function initializeFloatingButtons() {
+    const floatingBtns = document.querySelectorAll('.floating-btn');
+    floatingBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            console.log(`Floating button clicked: ${this.title || this.textContent}`);
+        });
+    });
+}
+
+// Enhanced notification system
+function showNotification(message, type = 'info', duration = 6000) {
+    // Remove existing notifications
+    const existing = document.querySelectorAll('.notification');
+    existing.forEach(n => n.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification--${type}`;
+    
+    const bgColors = {
+        success: 'linear-gradient(135deg, #10b981, #065f46)',
+        error: 'linear-gradient(135deg, #ef4444, #991b1b)',
+        info: 'linear-gradient(135deg, #3b82f6, #1e40af)'
+    };
+    
+    notification.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+            <div style="flex: 1;">${message}</div>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">&times;</button>
+        </div>
+    `;
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        left: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+        background: ${bgColors[type] || bgColors.info};
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        z-index: 10001;
+        transform: translateY(-100px);
+        transition: all 0.4s ease;
+        font-weight: 500;
+        line-height: 1.5;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateY(0)';
+    }, 100);
+    
+    if (duration > 0) {
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.transform = 'translateY(-100px)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, duration);
+    }
+    
+    return notification;
+}
+
+// Performance monitoring
+function monitorPerformance() {
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const perfData = performance.timing;
+            const loadTime = perfData.loadEventEnd - perfData.navigationStart;
+            console.log(`📊 Page load time: ${loadTime}ms`);
+        }, 0);
+    });
+}
+
+// Utility functions
+function smoothScrollTo(targetY, duration = 800) {
+    const startY = window.pageYOffset;
+    const distance = targetY - startY;
+    const startTime = performance.now();
+    
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+    
+    function animateScroll(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+        
+        window.scrollTo(0, startY + distance * ease);
+        
+        if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+        }
+    }
+    
+    requestAnimationFrame(animateScroll);
+}
+
 function updateActiveNavLink(targetId) {
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -51,426 +580,30 @@ function updateActiveNavLink(targetId) {
     });
 }
 
-// Highlight active navigation item - Fixed
 function highlightActiveNavItem() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
-    const navHeight = document.querySelector('.navigation').offsetHeight || 80;
     
-    let currentSection = '';
-    const scrollPosition = window.scrollY + navHeight + 100;
+    let current = '';
+    const scrollPosition = window.scrollY + 150;
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionBottom = sectionTop + section.offsetHeight;
+        const sectionHeight = section.offsetHeight;
         
-        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-            currentSection = section.getAttribute('id');
+        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            current = section.getAttribute('id');
         }
     });
     
-    // If no section is active, default to the first visible section
-    if (!currentSection && sections.length > 0) {
-        const firstSection = sections[0];
-        if (window.scrollY < firstSection.offsetTop + firstSection.offsetHeight) {
-            currentSection = firstSection.getAttribute('id');
-        }
-    }
-    
     navLinks.forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('href') === `#${currentSection}`) {
+        if (link.getAttribute('href') === `#${current}`) {
             link.classList.add('active');
         }
     });
 }
 
-// Initialize hero buttons - Fixed
-function initializeHeroButtons() {
-    const enrollButton = document.querySelector('.hero-buttons .btn--primary');
-    const contactButton = document.querySelector('.hero-buttons .btn--outline');
-    
-    if (enrollButton) {
-        enrollButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            const enquirySection = document.querySelector('#enquiry');
-            if (enquirySection) {
-                const navHeight = document.querySelector('.navigation').offsetHeight || 80;
-                const targetPosition = enquirySection.offsetTop - navHeight - 20;
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
-                });
-            }
-        });
-    }
-    
-    if (contactButton) {
-        contactButton.addEventListener('click', function(e) {
-            e.preventDefault();
-            const contactSection = document.querySelector('#contact');
-            if (contactSection) {
-                const navHeight = document.querySelector('.navigation').offsetHeight || 80;
-                const targetPosition = contactSection.offsetTop - navHeight - 20;
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
-                });
-            }
-        });
-    }
-}
-
-// Form functionality - Fixed
-function initializeForm() {
-    const form = document.getElementById('enquiryForm');
-    
-    if (form) {
-        form.addEventListener('submit', handleFormSubmission);
-        
-        // Add real-time validation
-        const requiredFields = form.querySelectorAll('input[required], select[required]');
-        requiredFields.forEach(field => {
-            field.addEventListener('blur', function() {
-                validateField(this);
-            });
-            field.addEventListener('input', function() {
-                clearFieldError(this);
-            });
-        });
-        
-        // Phone number validation
-        const phoneField = document.getElementById('phone');
-        if (phoneField) {
-            phoneField.addEventListener('input', function(e) {
-                validatePhoneNumber(e);
-            });
-        }
-        
-        // Email validation
-        const emailField = document.getElementById('email');
-        if (emailField) {
-            emailField.addEventListener('blur', function(e) {
-                validateEmail(e);
-            });
-        }
-    }
-}
-
-// Handle form submission - Fixed
-function handleFormSubmission(e) {
-    e.preventDefault();
-    
-    const form = e.target;
-    
-    // Clear any existing errors
-    clearAllErrors(form);
-    
-    // Validate all fields
-    if (!validateAllFields(form)) {
-        showNotification('Please fill in all required fields correctly.', 'error');
-        
-        // Focus on first error field
-        const firstErrorField = form.querySelector('.form-control.error');
-        if (firstErrorField) {
-            firstErrorField.focus();
-        }
-        return;
-    }
-    
-    // Collect form data
-    const enquiryData = {
-        studentName: document.getElementById('studentName').value.trim(),
-        studentClass: document.getElementById('studentClass').value,
-        board: document.getElementById('board').value,
-        subjects: document.getElementById('subjects').value.trim() || 'Not specified',
-        mode: document.getElementById('mode').value,
-        parentName: document.getElementById('parentName').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        email: document.getElementById('email').value.trim() || 'Not provided',
-        address: document.getElementById('address').value.trim() || 'Not provided',
-        message: document.getElementById('message').value.trim() || 'No additional message'
-    };
-    
-    // Show loading state
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
-    submitButton.innerHTML = '<span>Submitting...</span>';
-    submitButton.disabled = true;
-    submitButton.style.opacity = '0.7';
-    
-    // Simulate form submission
-    setTimeout(() => {
-        // Reset form
-        form.reset();
-        
-        // Reset button
-        submitButton.innerHTML = originalText;
-        submitButton.disabled = false;
-        submitButton.style.opacity = '1';
-        
-        // Show success message
-        showNotification('Thank you for your enquiry! Dr. Vijay Jawale will contact you soon.', 'success');
-        
-        // Log enquiry data
-        console.log('Enquiry Submitted Successfully:', enquiryData);
-        
-        // Scroll to top of form
-        const enquirySection = document.getElementById('enquiry');
-        if (enquirySection) {
-            const navHeight = document.querySelector('.navigation').offsetHeight || 80;
-            const targetPosition = enquirySection.offsetTop - navHeight - 20;
-            window.scrollTo({
-                top: Math.max(0, targetPosition),
-                behavior: 'smooth'
-            });
-        }
-        
-    }, 1000);
-}
-
-// Validate individual field - Fixed
-function validateField(field) {
-    const value = field.value.trim();
-    
-    clearFieldError(field);
-    
-    if (field.hasAttribute('required') && !value) {
-        showFieldError(field, 'This field is required.');
-        return false;
-    }
-    
-    // Additional validation based on field type
-    if (field.type === 'email' && value && !isValidEmail(value)) {
-        showFieldError(field, 'Please enter a valid email address.');
-        return false;
-    }
-    
-    if (field.type === 'tel' && value && !isValidPhoneNumber(value)) {
-        showFieldError(field, 'Please enter a valid 10-digit phone number.');
-        return false;
-    }
-    
-    return true;
-}
-
-// Validate all fields - Fixed
-function validateAllFields(form) {
-    const requiredFields = form.querySelectorAll('input[required], select[required]');
-    let isValid = true;
-    
-    requiredFields.forEach(field => {
-        if (!validateField(field)) {
-            isValid = false;
-        }
-    });
-    
-    // Validate optional email if provided
-    const emailField = document.getElementById('email');
-    if (emailField && emailField.value.trim() && !isValidEmail(emailField.value.trim())) {
-        showFieldError(emailField, 'Please enter a valid email address.');
-        isValid = false;
-    }
-    
-    // Validate phone number format
-    const phoneField = document.getElementById('phone');
-    if (phoneField && phoneField.value.trim() && !isValidPhoneNumber(phoneField.value.trim())) {
-        showFieldError(phoneField, 'Please enter a valid 10-digit phone number.');
-        isValid = false;
-    }
-    
-    return isValid;
-}
-
-// Clear all errors
-function clearAllErrors(form) {
-    const errorFields = form.querySelectorAll('.form-control.error');
-    errorFields.forEach(field => {
-        clearFieldError(field);
-    });
-}
-
-// Clear field error - Fixed
-function clearFieldError(field) {
-    field.classList.remove('error');
-    const errorMessage = field.parentNode.querySelector('.error-message');
-    if (errorMessage) {
-        errorMessage.remove();
-    }
-}
-
-// Show field error - Fixed
-function showFieldError(field, message) {
-    field.classList.add('error');
-    
-    // Remove existing error message
-    clearFieldError(field);
-    
-    // Add new error message
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.textContent = message;
-    errorElement.style.cssText = `
-        color: var(--color-error);
-        font-size: var(--font-size-sm);
-        margin-top: var(--space-4);
-        animation: fadeInError 0.3s ease-in-out;
-    `;
-    
-    field.parentNode.appendChild(errorElement);
-}
-
-// Phone number validation - Fixed
-function validatePhoneNumber(e) {
-    const field = e.target;
-    let value = field.value.replace(/\D/g, ''); // Remove non-digits
-    
-    // Limit to 10 digits
-    if (value.length > 10) {
-        value = value.substring(0, 10);
-    }
-    
-    field.value = value;
-    
-    // Clear error if field becomes valid
-    if (value.length === 10) {
-        clearFieldError(field);
-    }
-}
-
-// Email validation - Fixed
-function validateEmail(e) {
-    const field = e.target;
-    const value = field.value.trim();
-    
-    if (value && !isValidEmail(value)) {
-        showFieldError(field, 'Please enter a valid email address.');
-    } else {
-        clearFieldError(field);
-    }
-}
-
-// Email validation helper
-function isValidEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-}
-
-// Phone validation helper
-function isValidPhoneNumber(phone) {
-    const phoneRegex = /^[0-9]{10}$/;
-    return phoneRegex.test(phone);
-}
-
-// Show notification - Fixed
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => notification.remove());
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification--${type}`;
-    notification.textContent = message;
-    
-    // Style notification
-    const bgColor = type === 'success' ? 'var(--color-success)' : 
-                   type === 'error' ? 'var(--color-error)' : 'var(--color-info)';
-    
-    notification.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        left: 20px;
-        max-width: 400px;
-        margin: 0 auto;
-        background-color: ${bgColor};
-        color: white;
-        padding: var(--space-16) var(--space-20);
-        border-radius: var(--radius-base);
-        box-shadow: var(--shadow-lg);
-        z-index: 1000;
-        font-size: var(--font-size-md);
-        font-weight: var(--font-weight-medium);
-        transform: translateY(-100px);
-        transition: transform var(--duration-normal) var(--ease-standard);
-        opacity: 0.95;
-        text-align: center;
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-        notification.style.transform = 'translateY(0)';
-    }, 100);
-    
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        notification.style.transform = 'translateY(-100px)';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 300);
-    }, 4000);
-}
-
-// Initialize scroll effects
-function initializeScrollEffects() {
-    // Add scroll event listener
-    window.addEventListener('scroll', debounce(handleScrollEffects, 50));
-    
-    // Initialize intersection observer for animations
-    initializeIntersectionObserver();
-}
-
-// Handle scroll effects
-function handleScrollEffects() {
-    const scrolled = window.pageYOffset;
-    
-    // Add scroll class to navigation for styling
-    const navigation = document.querySelector('.navigation');
-    if (navigation) {
-        if (scrolled > 50) {
-            navigation.classList.add('scrolled');
-        } else {
-            navigation.classList.remove('scrolled');
-        }
-    }
-}
-
-// Initialize intersection observer for animations
-function initializeIntersectionObserver() {
-    // Check if IntersectionObserver is supported
-    if (!window.IntersectionObserver) {
-        return;
-    }
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver(handleIntersection, observerOptions);
-    
-    // Observe elements for animation
-    const animateElements = document.querySelectorAll('.feature-card, .benefit-item, .contact-item, .area-item');
-    animateElements.forEach(element => {
-        observer.observe(element);
-    });
-}
-
-// Handle intersection for animations
-function handleIntersection(entries) {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('animate-in');
-        }
-    });
-}
-
-// Utility function - Debounce
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -483,97 +616,12 @@ function debounce(func, wait) {
     };
 }
 
-// Add dynamic styles for animations and states
-function addDynamicStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .form-control.error {
-            border-color: var(--color-error) !important;
-            box-shadow: 0 0 0 3px rgba(var(--color-error-rgb), 0.1) !important;
-        }
-        
-        @keyframes fadeInError {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .navigation.scrolled {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .animate-in {
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .nav-link.active {
-            color: var(--color-primary) !important;
-            background: var(--color-secondary);
-        }
-        
-        .nav-link:hover {
-            color: var(--color-primary) !important;
-            background: var(--color-secondary);
-        }
-        
-        /* Mobile responsive notification */
-        @media (max-width: 768px) {
-            .notification {
-                left: 10px !important;
-                right: 10px !important;
-                max-width: none !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Initialize dynamic styles
-addDynamicStyles();
-
-// Keyboard navigation support
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-        if (e.target.classList.contains('nav-link')) {
-            e.preventDefault();
-            e.target.click();
-        }
-    }
-});
-
-// Prevent form submission on Enter in input fields (except textarea)
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'submit') {
-        e.preventDefault();
-        // Move to next form field
-        const formElements = Array.from(document.querySelectorAll('input, select, textarea, button'));
-        const currentIndex = formElements.indexOf(e.target);
-        const nextElement = formElements[currentIndex + 1];
-        if (nextElement) {
-            nextElement.focus();
-        }
-    }
-});
-
-// Export functions for potential external use
+// Export for external use
 window.VijayClasses = {
     showNotification,
-    validateEmail: isValidEmail,
-    validatePhone: isValidPhoneNumber,
-    initializeNavigation,
-    initializeForm
+    smoothScrollTo
 };
 
-console.log('Vijay Classes website JavaScript loaded successfully!');
+console.log('✅ Vijay Classes Fixed JavaScript Loaded Successfully!');
+console.log('📧 Form ready to send enquiries to: vijayclasseshelp@gmail.com');
+console.log('🔧 Form input issues have been resolved!');
