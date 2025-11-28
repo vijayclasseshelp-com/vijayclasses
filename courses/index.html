@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Courses | Vijay Classes</title>
+    <style>
+        /* Basic Reset & Fonts */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; }
+        
+        /* Navigation (Same as Home) */
+        nav { background: #2c3e50; padding: 15px; text-align: center; }
+        nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 1.1em; }
+        nav a:hover { color: #f1c40f; }
+
+        /* Header */
+        header { background: #3498db; color: white; padding: 40px 20px; text-align: center; }
+        header h1 { margin: 0; font-size: 2.5em; }
+        header p { margin-top: 10px; font-size: 1.2em; }
+
+        /* Course Grid Layout */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+        /* Course Cards */
+        .card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
+        .card:hover { transform: translateY(-5px); }
+        .card-header { background: #2c3e50; color: white; padding: 20px; text-align: center; }
+        .card-body { padding: 20px; }
+        .card-body h3 { color: #2c3e50; margin-top: 0; }
+        .card-body ul { padding-left: 20px; color: #555; }
+        .btn { display: block; width: 100%; padding: 12px 0; background: #e74c3c; color: white; text-align: center; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 15px; }
+        .btn:hover { background: #c0392b; }
+
+        /* Footer */
+        footer { background: #2c3e50; color: white; text-align: center; padding: 20px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="../index.html">Home</a>
+        <a href="index.html">Courses</a>
+        <a href="../index.html#contact">Contact</a>
+    </nav>
+
+    <header>
+        <h1>Our Academic Programs</h1>
+        <p>Expert Coaching for Classes 1st to 12th in Pune</p>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Classes 1st - 10th</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Foundation Building</h3>
+                    <ul>
+                        <li><strong>Boards:</strong> CBSE, ICSE, SSC</li>
+                        <li><strong>Subjects:</strong> Maths, Science, English, SST</li>
+                        <li><strong>Focus:</strong> Concept Clarity & Basics</li>
+                    </ul>
+                    <a href="school.html" class="btn">View Details</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Class 11th & 12th</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Science Stream</h3>
+                    <ul>
+                        <li><strong>Subjects:</strong> Physics, Chemistry, Maths, Bio</li>
+                        <li><strong>Target:</strong> Board Exams (HSC/CBSE)</li>
+                        <li><strong>Batches:</strong> Morning & Evening</li>
+                    </ul>
+                    <a href="science.html" class="btn">View Details</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Entrance Prep</h2>
+                </div>
+                <div class="card-body">
+                    <h3>JEE / NEET / CET</h3>
+                    <ul>
+                        <li><strong>Focus:</strong> MCQ Solving Techniques</li>
+                        <li><strong>Material:</strong> Specialized Modules</li>
+                        <li><strong>Tests:</strong> Weekly Mock Exams</li>
+                    </ul>
+                    <a href="entrance.html" class="btn">View Details</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Vijay Classes. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
