@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vijay Classes | Class 1st to 10th Notes</title>
+    <style>
+        /* --- 1. Variables based on your Screenshot --- */
+        :root {
+            --primary-dark: #2c3e50;   /* Navbar & Card Headers */
+            --hero-blue: #3498db;      /* Header Section */
+            --btn-red: #e74c3c;        /* Buttons */
+            --btn-red-hover: #c0392b;
+            --bg-light: #f8f9fa;
+            --text-main: #333;
+        }
+
+        /* --- 2. Global Reset & Body --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative; /* For watermark positioning */
+        }
+
+        /* --- 3. The Watermark (Logo Behind Content) --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('logo.png'); /* Ensure logo.png is in the same folder */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 500px; /* Adjust size of logo here */
+            opacity: 0.15; /* Transparency: 0.1 is very faint, 1 is full */
+            z-index: -1; /* Puts it behind everything */
+            pointer-events: none;
+        }
+
+        /* --- 4. Navigation (Matches Main Site) --- */
+        nav {
+            background-color: var(--primary-dark);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--hero-blue);
+        }
+
+        /* --- 5. Hero Section --- */
+        header {
+            background-color: var(--hero-blue);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* --- 6. Main Container & Grid --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 50px 20px;
+        }
+
+        .section-title {
+            color: var(--primary-dark);
+            border-left: 5px solid var(--btn-red);
+            padding-left: 15px;
+            margin: 30px 0 20px 0;
+            font-size: 1.8rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        /* --- 7. Class Cards --- */
+        .card {
+            background: rgba(255, 255, 255, 0.95); /* Slight transparency to see watermark faintly */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .subject-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .subject-list li {
+            border-bottom: 1px solid #eee;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .subject-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* --- 8. Buttons --- */
+        .btn-view {
+            display: inline-block;
+            background-color: var(--btn-red);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .btn-view:hover {
+            background-color: var(--btn-red-hover);
+        }
+
+        .card-footer-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--btn-red);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .card-footer-btn:hover {
+            background-color: var(--btn-red-hover);
+        }
+
+        /* --- 9. Search Bar --- */
+        .search-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        #searchInput {
+            padding: 12px;
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        #searchInput:focus {
+            border-color: var(--hero-blue);
+        }
+
+        /* --- 10. Footer --- */
+        footer {
+            background-color: var(--primary-dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .nav-links { display: none; } /* Simplified for mobile */
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">Vijay Classes</div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#">Courses</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <header>
+        <h1>Study Material Repository</h1>
+        <p>Comprehensive Notes & Solutions for Classes 1st to 10th</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" onkeyup="filterCards()" placeholder="Search for your Class (e.g., 'Class 10')...">
+        </div>
+
+        <h2 class="section-title">Secondary School (Classes 6th - 10th)</h2>
+        <div class="notes-grid">
+            
+            <div class="card" data-class="class 10">
+                <div class="card-header">
+                    <h3>Class 10 (Board)</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Mathematics <a href="#" class="btn-view">View</a></li>
+                        <li>Science <a href="#" class="btn-view">View</a></li>
+                        <li>Social Science <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+
+            <div class="card" data-class="class 9">
+                <div class="card-header">
+                    <h3>Class 9</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Mathematics <a href="#" class="btn-view">View</a></li>
+                        <li>Science <a href="#" class="btn-view">View</a></li>
+                        <li>Social Science <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+
+            <div class="card" data-class="class 8">
+                <div class="card-header">
+                    <h3>Class 8</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Mathematics <a href="#" class="btn-view">View</a></li>
+                        <li>Science <a href="#" class="btn-view">View</a></li>
+                        <li>History/Civics <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+
+            <div class="card" data-class="class 7">
+                <div class="card-header">
+                    <h3>Class 7</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Mathematics <a href="#" class="btn-view">View</a></li>
+                        <li>Science <a href="#" class="btn-view">View</a></li>
+                        <li>Social Studies <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+
+            <div class="card" data-class="class 6">
+                <div class="card-header">
+                    <h3>Class 6</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Mathematics <a href="#" class="btn-view">View</a></li>
+                        <li>Science <a href="#" class="btn-view">View</a></li>
+                        <li>Social Studies <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+        </div>
+
+        <h2 class="section-title">Primary School (Classes 1st - 5th)</h2>
+        <div class="notes-grid">
+            
+            <div class="card" data-class="class 5">
+                <div class="card-header">
+                    <h3>Class 5</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Maths (Magic) <a href="#" class="btn-view">View</a></li>
+                        <li>EVS <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+
+            <div class="card" data-class="class 4">
+                <div class="card-header">
+                    <h3>Class 4</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Maths <a href="#" class="btn-view">View</a></li>
+                        <li>EVS <a href="#" class="btn-view">View</a></li>
+                        <li>English <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download All PDF</a>
+            </div>
+
+            <div class="card" data-class="class 3 2 1">
+                <div class="card-header">
+                    <h3>Classes 1st to 3rd</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="subject-list">
+                        <li>Class 3 All Subjects <a href="#" class="btn-view">View</a></li>
+                        <li>Class 2 All Subjects <a href="#" class="btn-view">View</a></li>
+                        <li>Class 1 All Subjects <a href="#" class="btn-view">View</a></li>
+                    </ul>
+                </div>
+                <a href="#" class="card-footer-btn">Download Worksheets</a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Vijay Classes. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function filterCards() {
+            var input = document.getElementById("searchInput");
+            var filter = input.value.toLowerCase();
+            var cards = document.getElementsByClassName("card");
+
+            for (var i = 0; i < cards.length; i++) {
+                var dataClass = cards[i].getAttribute("data-class");
+                if (dataClass.indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
